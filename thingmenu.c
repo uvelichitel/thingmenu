@@ -649,11 +649,13 @@ main(int argc, char *argv[])
 				if (i >= argc - 1)
 					break;
 				fname = argv[i+1];
+				i++;
 				break;
 			case 'd':
 				if (i >= argc - 1)
 					break;
 				delim = argv[i+1];
+				i++;
 				break;
 			case 'h':
 				switch ((i >= argc - 1)? 0 : argv[i][2]) {
