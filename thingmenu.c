@@ -106,6 +106,8 @@ int nentries = 0;
 int oneshot = 1;
 Bool ispressing = 0;
 
+Bool followmouse = False;
+
 /* configuration, allows nested code to access above variables */
 #include "config.h"
 
@@ -425,6 +427,9 @@ setup(void)
 	root = RootWindow(dpy, screen);
 	sw = DisplayWidth(dpy, screen) - 1;
 	sh = DisplayHeight(dpy, screen) - 1;
+	Window          root_ret, child_ret;
+	int wxr, wyr;
+	unsigned int mask;
 	initfont(font);
 
 	/* init atoms */
@@ -453,15 +458,18 @@ setup(void)
 			wh = nentries * dc.font.height * heightscaling;
 		}
 	}
-	if (!wy)
-		wy = (sh - wh) / 2;
-	if (wy < 0)
-		wy = sh + wy - wh;
-	if (!wx)
-		wx = (sw - ww) / 2;
-	if (wx < 0)
-		wx = sw + wx - ww;
-
+	if (followmouse){
+		XQueryPointer(dpy, root, &root_ret, &child_ret, &wx, &wy, &wxr, &wyr, &mask);
+	}else{
+		if (!wy)
+			wy = (sh - wh) / 2;
+		if (wy < 0)
+			wy = sh + wy - wh;
+		if (!wx)
+			wx = (sw - ww) / 2;
+		if (wx < 0)
+			wx = sw + wx - ww;
+	}
 	dc.norm[ColBG] = getcolor(normbgcolor);
 	dc.norm[ColFG] = getcolor(normfgcolor);
 	dc.press[ColBG] = getcolor(pressbgcolor);
@@ -599,7 +607,7 @@ updateentries(void)
 void
 usage(char *argv0)
 {
-	fprintf(stderr, "usage: %s [-hxso] [-g geometry] [-ws widthscaling] "
+	fprintf(stderr, "usage: %s [-hxsmo] [-g geometry] [-ws widthscaling] "
 			              "[-hs heightscaling] [-f file] [-d delimiter]\n", argv0);
 	exit(1);
 }
@@ -666,6 +674,9 @@ main(int argc, char *argv[])
 				default:
 					usage(argv[0]);
 				}
+				break;
+			case 'm':
+				followmouse = True;
 				break;
 			case 'o':
 				horizontal = True;
