@@ -12,6 +12,8 @@
 .Op Fl x
 .Op Fl s
 .Op Fl o
+.Op Fl f Ar file
+.Op Fl d Ar delimiter
 .Op Fl g Ar geometry
 .Op Fl ws Ar widthscaling
 .Op Fl hs Ar heightscaling
@@ -62,6 +64,13 @@ button is clicked.
 .
 .It Fl o
 Use the horizontal layout.
+.
+.It Fl d
+Specify delimeter between label and command.
+.
+.It Fl f
+Specify file containing label'delimiter'command lines.
+Else read from stdin.
 .
 .It Fl g
 Define the X11 geometry string, which is to be used.
