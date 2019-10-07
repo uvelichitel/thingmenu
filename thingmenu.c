@@ -600,8 +600,7 @@ void
 usage(char *argv0)
 {
 	fprintf(stderr, "usage: %s [-hxso] [-g geometry] [-ws widthscaling] "
-			"[-hs heightscaling] [--] "
-			"label0 cmd0 [label1 cmd1 ...]\n", argv0);
+			              "[-hs heightscaling] [-f file] [-d delimiter]\n", argv0);
 	exit(1);
 }
 
@@ -704,12 +703,6 @@ main(int argc, char *argv[])
 			*p = '\0';
 			cmd = p + strlen(delim);
 		}
-	//	label = argv[i];
-	//	if (!argv[i+1])
-	//		break;
-	//	i++;
-	//`	cmd = argv[i];
-
 		entries = realloc(entries, sizeof(entries[0])*(++nentries));
 		entries[nentries-1] = malloc(sizeof(*entries[0]));
 		memset(entries[nentries-1], 0, sizeof(*entries[0]));
