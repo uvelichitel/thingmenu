@@ -5,15 +5,15 @@ VERSION = 0.7
 # Customize below to fit your system
 
 # paths
-PREFIX ?= /usr/local
+PREFIX ?= /usr/home/uvelichitel/.local
 MANPREFIX = ${PREFIX}/share/man
 
-X11INC = /usr/X11R6/include
-X11LIB = /usr/X11R6/lib
+X11INC = /usr/local/include/X11
+X11LIB = /usr/local/lib/x11
 
 # includes and libs
-INCS = -I. -I/usr/include
-LIBS = -L/usr/lib -L${X11LIB} -lc -lX11
+INCS = -I. -I/usr/include -I/usr/local/include
+LIBS = -L/usr/lib -L${X11LIB} -lc -lX11 -L/usr/local/lib
 
 # flags
 CPPFLAGS = -DVERSION=\"${VERSION}\" -D_POSIX_C_SOURCE=200809L
@@ -22,5 +22,5 @@ LDFLAGS = -g ${LIBS}
 #LDFLAGS = -s ${LIBS}
 
 # compiler and linker
-CC = cc
+CC = gcc9
 

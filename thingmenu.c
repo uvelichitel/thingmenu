@@ -609,83 +609,106 @@ int
 main(int argc, char *argv[])
 {
 	Bool addexit;
-	char *label, *cmd;
+	char *label, *cmd, *p, *delim = " ", *fname = "/dev/stdin";
 	int i, xr, yr, bitm;
 	unsigned int wr, hr;
-
+	FILE* input;
+	char buf[256];
 
 	addexit = True;
 
-	if (argc < 2)
-		usage(argv[0]);
-	i = 1;
-	for (; argv[i]; i++) {
-		if (argv[i][0] != '-')
-			break;
-		if (argv[i][1] == '-') {
-			i++;
-			break;
-		}
+	if (argc > 1){
+		i = 1;
+		for (; argv[i]; i++) {
+			if (argv[i][0] != '-')
+				break;
+			if (argv[i][1] == '-') {
+				i++;
+				break;
+			}
 
-		switch (argv[i][1]) {
-		case 'g':
-			if (i >= argc - 1)
-				break;
-			bitm = XParseGeometry(argv[i+1], &xr, &yr, &wr, &hr);
-			if (bitm & XValue)
-				wx = xr;
-			if (bitm & YValue)
-				wy = yr;
-			if (bitm & WidthValue)
-				ww = (int)wr;
-			if (bitm & HeightValue)
-				wh = (int)hr;
-			if (bitm & XNegative && wx == 0)
-				wx = -1;
-			if (bitm & YNegative && wy == 0)
-				wy = -1;
-			i++;
-			break;
-		case 'h':
-			switch ((i >= argc - 1)? 0 : argv[i][2]) {
-			case 's':
-				heightscaling = atof(argv[i+1]);
+			switch (argv[i][1]) {
+			case 'g':
+				if (i >= argc - 1)
+					break;
+				bitm = XParseGeometry(argv[i+1], &xr, &yr, &wr, &hr);
+				if (bitm & XValue)
+					wx = xr;
+				if (bitm & YValue)
+					wy = yr;
+				if (bitm & WidthValue)
+					ww = (int)wr;
+				if (bitm & HeightValue)
+					wh = (int)hr;
+				if (bitm & XNegative && wx == 0)
+					wx = -1;
+				if (bitm & YNegative && wy == 0)
+					wy = -1;
 				i++;
+				break;
+			case 'f':
+				if (i >= argc - 1)
+					break;
+				fname = argv[i+1];
+				break;
+			case 'd':
+				if (i >= argc - 1)
+					break;
+				delim = argv[i+1];
+				break;
+			case 'h':
+				switch ((i >= argc - 1)? 0 : argv[i][2]) {
+				case 's':
+					heightscaling = atof(argv[i+1]);
+					i++;
+					break;
+				default:
+					usage(argv[0]);
+				}
+				break;
+			case 'o':
+				horizontal = True;
+				break;
+			case 's':
+				oneshot = 0;
+				break;
+			case 'w':
+				switch ((i >= argc - 1)? 0 : argv[i][2]) {
+				case 's':
+					widthscaling = atof(argv[i+1]);
+					i++;
+					break;
+				default:
+					usage(argv[0]);
+				}
+				break;
+			case 'x':
+				addexit = False;
 				break;
 			default:
 				usage(argv[0]);
 			}
-			break;
-		case 'o':
-			horizontal = True;
-			break;
-		case 's':
-			oneshot = 0;
-			break;
-		case 'w':
-			switch ((i >= argc - 1)? 0 : argv[i][2]) {
-			case 's':
-				widthscaling = atof(argv[i+1]);
-				i++;
-				break;
-			default:
-				usage(argv[0]);
-			}
-			break;
-		case 'x':
-			addexit = False;
-			break;
-		default:
-			usage(argv[0]);
 		}
 	}
-
-	for (; argv[i]; i++) {
-		label = argv[i];
-		if (!argv[i+1])
-			break;
-		i++;
-		cmd = argv[i];
+	input = fopen(fname, "r");
+	if (input==NULL){ 
+        printf("no such file."); 
+        return 0; 
+    }
+	while (fgets(buf, sizeof buf, input)) {
+		if ((p = strchr(buf, '\n')))
+			*p = '\0';
+		label = strdup(buf);
+		p = strstr(label, delim);
+		if (p != NULL){
+			*p = '\0';
+			cmd = p + strlen(delim);
+		}
+	//	label = argv[i];
+	//	if (!argv[i+1])
+	//		break;
+	//	i++;
+	//`	cmd = argv[i];
 
 		entries = realloc(entries, sizeof(entries[0])*(++nentries));
 		entries[nentries-1] = malloc(sizeof(*entries[0]));
